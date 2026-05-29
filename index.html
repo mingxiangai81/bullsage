@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MasterLens 大师镜 — AI 投资分析平台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800;900&family=Noto+Serif+SC:wght@400;500;600;700;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy-light: #132038;
+  --navy-mid: #1a2d4a;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --gold-dim: #a08432;
+  --white: #f4f0eb;
+  --text: #c8c2b8;
+  --text-light: #9e9789;
+  --accent-green: #34d399;
+  --accent-red: #f87171;
+  --accent-blue: #60a5fa;
+  --card-bg: rgba(19, 32, 56, 0.6);
+  --glass: rgba(255,255,255,0.04);
+  --border: rgba(201, 168, 76, 0.15);
+  --serif-en: 'Playfair Display', Georgia, serif;
+  --serif-cn: 'Noto Serif SC', '宋体', serif;
+  --sans-en: 'Inter', -apple-system, sans-serif;
+  --sans-cn: 'Noto Sans SC', '微软雅黑', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--navy);
+  color: var(--text);
+  font-family: var(--sans-cn), var(--sans-en);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+::selection { background: var(--gold); color: var(--navy); }
+
+/* ── Typography ── */
+h1,h2,h3,h4 { font-family: var(--serif-cn), var(--serif-en); color: var(--white); line-height:1.25; }
+h1 { font-size: clamp(2.2rem,5vw,3.8rem); font-weight:800; letter-spacing:-0.02em; }
+h2 { font-size: clamp(1.6rem,3.5vw,2.6rem); font-weight:700; }
+h3 { font-size: clamp(1.1rem,2vw,1.4rem); font-weight:600; }
+.gold { color: var(--gold); }
+.serif { font-family: var(--serif-cn), var(--serif-en); }
+
+/* ── Layout ── */
+.container { max-width:1200px; margin:0 auto; padding:0 24px; }
+section { padding: 100px 0; position: relative; }
+
+/* ── Nav ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:100;
+  background: rgba(10,22,40,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s;
+}
+nav .container {
+  display:flex; align-items:center; justify-content:space-between;
+  height:64px;
+}
+.logo {
+  font-family: var(--serif-en);
+  font-size:1.4rem; font-weight:700;
+  color: var(--gold);
+  display:flex; align-items:center; gap:8px;
+  text-decoration: none;
+}
+.logo-icon {
+  width:32px; height:32px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; color:var(--navy); font-weight:900;
+}
+.nav-links { display:flex; align-items:center; gap:28px; list-style:none; }
+.nav-links a {
+  color: var(--text); text-decoration:none; font-size:0.9rem;
+  font-weight:500; transition:color 0.2s;
+}
+.nav-links a:hover { color: var(--gold); }
+.lang-toggle {
+  background: var(--glass);
+  border:1px solid var(--border);
+  border-radius:20px; padding:4px;
+  display:flex; cursor:pointer;
+}
+.lang-btn {
+  padding:4px 12px; border-radius:16px; font-size:0.8rem;
+  font-weight:600; border:none; cursor:pointer;
+  transition:all 0.3s; background:transparent; color:var(--text-light);
+}
+.lang-btn.active {
+  background:var(--gold); color:var(--navy);
+}
+.nav-cta {
+  background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+  color:var(--navy)!important; padding:8px 20px;
+  border-radius:8px; font-weight:700!important;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.nav-cta:hover { transform:translateY(-1px); box-shadow:0 4px 20px rgba(201,168,76,0.3); }
+
+/* ── Hero ── */
+.hero {
+  min-height:100vh; display:flex; align-items:center;
+  padding-top:80px;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(96,165,250,0.04) 0%, transparent 50%),
+    var(--navy);
+  overflow:hidden;
+}
+.hero .container { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+.hero-text { position:relative; z-index:2; }
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--glass); border:1px solid var(--border);
+  border-radius:20px; padding:6px 16px; margin-bottom:24px;
+  font-size:0.82rem; color:var(--gold);
+}
+.hero-badge .dot { width:6px;height:6px;border-radius:50%;background:var(--accent-green);animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+.hero h1 { margin-bottom:20px; }
+.hero h1 .line2 { display:block; font-size:0.65em; color:var(--text); font-weight:400; margin-top:8px; font-family:var(--sans-cn),var(--sans-en); }
+.hero-sub {
+  font-size:1.1rem; color:var(--text); margin-bottom:36px;
+  max-width:520px; line-height:1.8;
+}
+.hero-sub strong { color:var(--gold-light); font-weight:600; }
+
+/* ── Ticker Input ── */
+.ticker-box {
+  background: var(--navy-light);
+  border:1px solid var(--border);
+  border-radius:16px; padding:24px;
+  max-width:480px;
+  position:relative;
+  overflow:hidden;
+}
+.ticker-box::before {
+  content:''; position:absolute; top:-50%; left:-50%;
+  width:200%; height:200%;
+  background:conic-gradient(from 0deg, transparent 0%, rgba(201,168,76,0.08) 25%, transparent 50%);
+  animation:spin 8s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+.ticker-box-inner { position:relative; z-index:1; }
+.ticker-label { font-size:0.85rem; color:var(--text-light); margin-bottom:10px; }
+.ticker-input-row { display:flex; gap:10px; margin-bottom:16px; }
+.ticker-input {
+  flex:1; background:var(--navy);
+  border:1px solid rgba(201,168,76,0.25);
+  border-radius:10px; padding:14px 18px;
+  color:var(--white); font-size:1.1rem;
+  font-family:var(--mono);
+  letter-spacing:2px; text-transform:uppercase;
+  outline:none; transition:border-color 0.3s;
+}
+.ticker-input::placeholder { color:var(--text-light); letter-spacing:1px; text-transform:none; font-family:var(--sans-cn); font-size:0.9rem; }
+.ticker-input:focus { border-color:var(--gold); }
+.ticker-go {
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:var(--navy); border:none; border-radius:10px;
+  padding:14px 28px; font-weight:700; font-size:1rem;
+  cursor:pointer; transition:all 0.3s;
+  white-space:nowrap;
+}
+.ticker-go:hover { transform:translateY(-2px); box-shadow:0 6px 24px rgba(201,168,76,0.35); }
+.ticker-hint {
+  display:flex; align-items:center; gap:6px;
+  font-size:0.78rem; color:var(--text-light);
+}
+.ticker-hint .keys { display:flex; gap:4px; }
+.ticker-hint .key {
+  background:var(--navy); border:1px solid rgba(255,255,255,0.1);
+  border-radius:4px; padding:1px 8px; font-size:0.72rem;
+  font-family:var(--mono); color:var(--text);
+}
+
+/* ── Hero Demo Card ── */
+.hero-demo {
+  position:relative; z-index:2;
+  perspective:1200px;
+}
+.demo-card {
+  background:var(--navy-light);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:28px;
+  box-shadow:0 40px 80px rgba(0,0,0,0.4);
+  transform:rotateY(-3deg) rotateX(2deg);
+  transition:transform 0.5s;
+}
+.demo-card:hover { transform:rotateY(0) rotateX(0); }
+.demo-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px; padding-bottom:16px;
+  border-bottom:1px solid var(--border);
+}
+.demo-stock { display:flex; align-items:center; gap:12px; }
+.demo-stock-icon {
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,#333,#555);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.9rem;font-weight:700;color:#fff;
+}
+.demo-stock-name { font-family:var(--serif-en); font-size:1.2rem; color:var(--white); font-weight:700; }
+.demo-stock-ticker { font-family:var(--mono); font-size:0.85rem; color:var(--text-light); }
+.demo-price { text-align:right; }
+.demo-price-val { font-family:var(--mono); font-size:1.3rem; color:var(--white); font-weight:600; }
+.demo-price-chg { font-family:var(--mono); font-size:0.85rem; color:var(--accent-green); }
+.demo-verdicts { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+.verdict-row {
+  display:flex; align-items:center; gap:12px;
+  background:var(--glass); border-radius:10px; padding:10px 14px;
+  border:1px solid transparent;
+  transition:border-color 0.3s;
+}
+.verdict-row:hover { border-color:var(--border); }
+.verdict-avatar {
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.75rem; font-weight:700; flex-shrink:0;
+}
+.verdict-name { font-size:0.85rem; color:var(--text); flex:1; }
+.verdict-name strong { color:var(--white); }
+.verdict-tag {
+  padding:3px 12px; border-radius:12px; font-size:0.75rem; font-weight:700;
+  letter-spacing:0.5px;
+}
+.tag-buy { background:rgba(52,211,153,0.15); color:var(--accent-green); }
+.tag-hold { background:rgba(234,179,8,0.15); color:#eab308; }
+.tag-pass { background:rgba(248,113,113,0.15); color:var(--accent-red); }
+.demo-consensus {
+  background:linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.05));
+  border:1px solid var(--border);
+  border-radius:12px; padding:14px 18px;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.consensus-label { font-size:0.85rem; color:var(--gold); }
+.consensus-score {
+  font-family:var(--serif-en); font-size:1.6rem; font-weight:800; color:var(--gold);
+}
+.consensus-detail { font-size:0.75rem; color:var(--text-light); text-align:right; }
+
+/* ── Trust Bar ── */
+.trust-bar {
+  background:var(--navy-light);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:32px 0;
+}
+.trust-items {
+  display:flex; justify-content:center; gap:48px; flex-wrap:wrap;
+}
+.trust-item {
+  display:flex; align-items:center; gap:10px;
+  font-size:0.9rem; color:var(--text);
+}
+.trust-icon {
+  width:36px;height:36px; border-radius:50%;
+  background:rgba(201,168,76,0.1);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;
+}
+
+/* ── Pain Points ── */
+.pain-section { background:var(--navy); }
+.section-header { text-align:center; margin-bottom:64px; }
+.section-header .overline {
+  font-size:0.8rem; color:var(--gold); text-transform:uppercase;
+  letter-spacing:3px; font-weight:600; margin-bottom:12px;
+}
+.section-header h2 { margin-bottom:16px; }
+.section-header p { max-width:640px; margin:0 auto; color:var(--text); }
+.pain-grid {
+  display:grid; grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));
+  gap:24px;
+}
+.pain-card {
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:16px; padding:32px;
+  transition:transform 0.3s, border-color 0.3s;
+  position:relative; overflow:hidden;
+}
+.pain-card:hover { transform:translateY(-4px); border-color:rgba(201,168,76,0.35); }
+.pain-card::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:linear-gradient(90deg, var(--gold), var(--gold-dim));
+  opacity:0; transition:opacity 0.3s;
+}
+.pain-card:hover::after { opacity:1; }
+.pain-icon {
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem; margin-bottom:20px;
+}
+.pain-icon.red { background:rgba(248,113,113,0.12); }
+.pain-icon.yellow { background:rgba(234,179,8,0.12); }
+.pain-icon.blue { background:rgba(96,165,250,0.12); }
+.pain-icon.green { background:rgba(52,211,153,0.12); }
+.pain-icon.purple { background:rgba(168,85,247,0.12); }
+.pain-problem { font-size:0.82rem; color:var(--accent-red); margin-bottom:6px; font-weight:600; }
+.pain-card h3 { margin-bottom:10px; }
+.pain-desc { font-size:0.9rem; color:var(--text); margin-bottom:16px; }
+.pain-solution {
+  display:flex; align-items:flex-start; gap:8px;
+  background:rgba(52,211,153,0.06);
+  border:1px solid rgba(52,211,153,0.15);
+  border-radius:10px; padding:12px 14px;
+}
+.pain-solution .check { color:var(--accent-green); font-size:1rem; flex-shrink:0; margin-top:2px; }
+.pain-solution p { font-size:0.85rem; color:var(--accent-green); }
+
+/* ── Skills / Features ── */
+.skills-section {
+  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-light) 100%);
+}
+.skills-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.skill-card {
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:20px; padding:36px;
+  position:relative; overflow:hidden;
+  transition:transform 0.3s, box-shadow 0.3s;
+}
+.skill-card:hover { transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+.skill-number {
+  position:absolute; top:20px; right:24px;
+  font-family:var(--serif-en); font-size:4rem; font-weight:900;
+  color:rgba(201,168,76,0.07); line-height:1;
+}
+.skill-icon-wrap {
+  width:56px;height:56px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem; margin-bottom:20px;
+}
+.skill-card h3 { margin-bottom:4px; font-size:1.2rem; }
+.skill-card .skill-en { font-size:0.8rem; color:var(--gold-dim); margin-bottom:14px; font-family:var(--mono); }
+.skill-card p { font-size:0.9rem; color:var(--text); margin-bottom:18px; }
+.skill-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.skill-tag {
+  padding:4px 10px; border-radius:6px; font-size:0.72rem;
+  background:var(--glass); border:1px solid rgba(255,255,255,0.06);
+  color:var(--text-light);
+}
+
+/* ── Master Verdict Demo ── */
+.verdict-section { background:var(--navy); }
+.verdict-demo-wrap {
+  background:var(--navy-light);
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:48px;
+  position:relative;
+  overflow:hidden;
+}
+.verdict-demo-wrap::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at top right, rgba(201,168,76,0.05), transparent 60%);
+  pointer-events:none;
+}
+.verdict-demo-header {
+  display:flex; justify-content:space-between; align-items:flex-end;
+  margin-bottom:36px; position:relative; z-index:1;
+}
+.verdict-demo-header h2 { margin-bottom:4px; }
+.verdict-demo-header p { font-size:0.9rem; color:var(--text); }
+.verdict-stock-badge {
+  display:flex; align-items:center; gap:12px;
+  background:var(--glass); border:1px solid var(--border);
+  border-radius:12px; padding:12px 20px;
+}
+.verdict-masters {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+  position:relative; z-index:1;
+  margin-bottom:32px;
+}
+.master-card {
+  background:var(--glass);
+  border:1px solid rgba(255,255,255,0.05);
+  border-radius:14px; padding:20px;
+  transition:all 0.3s;
+}
+.master-card:hover { border-color:var(--border); background:rgba(255,255,255,0.06); }
+.master-top { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.master-av {
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700; font-size:0.8rem;
+}
+.master-meta h4 { font-size:0.95rem; margin-bottom:2px; }
+.master-meta span { font-size:0.75rem; color:var(--text-light); }
+.master-quote {
+  font-family:var(--serif-cn), var(--serif-en);
+  font-size:0.85rem; color:var(--text);
+  font-style:italic; line-height:1.6;
+  margin-bottom:12px;
+  padding-left:12px;
+  border-left:2px solid var(--border);
+}
+.master-verdict {
+  display:flex; justify-content:space-between; align-items:center;
+}
+.verdict-big {
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:16px; padding:24px;
+  text-align:center;
+  position:relative; z-index:1;
+}
+.verdict-big-score {
+  font-family:var(--serif-en);
+  font-size:3rem; font-weight:900;
+  background:linear-gradient(135deg, var(--gold), var(--gold-light));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.verdict-big-label { font-size:0.9rem; color:var(--gold); margin-top:4px; }
+.verdict-breakdown {
+  display:flex; justify-content:center; gap:24px; margin-top:16px;
+}
+.vb-item { text-align:center; }
+.vb-num { font-size:1.4rem; font-weight:700; }
+.vb-label { font-size:0.75rem; color:var(--text-light); }
+
+/* ── Comparison Table ── */
+.compare-section { background:var(--navy-light); }
+.compare-table-wrap {
+  overflow-x:auto; border-radius:16px;
+  border:1px solid var(--border);
+}
+table.compare {
+  width:100%; border-collapse:collapse;
+  font-size:0.88rem;
+}
+table.compare th {
+  background:rgba(201,168,76,0.08);
+  padding:16px 20px; text-align:left;
+  font-weight:600; color:var(--gold);
+  border-bottom:1px solid var(--border);
+  white-space:nowrap;
+}
+table.compare th.ours {
+  background:linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.08));
+  color:var(--gold);
+}
+table.compare td {
+  padding:14px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  color:var(--text);
+}
+table.compare tr:last-child td { border-bottom:none; }
+table.compare td.ours {
+  background:rgba(201,168,76,0.03);
+  color:var(--white);
+  font-weight:500;
+}
+table.compare .yes { color:var(--accent-green); }
+table.compare .no { color:var(--accent-red); opacity:0.6; }
+table.compare .partial { color:#eab308; }
+table.compare td:first-child { font-weight:600; color:var(--white); white-space:nowrap; }
+
+/* ── Pricing ── */
+.pricing-section { background:var(--navy); }
+.pricing-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:20px;
+  align-items:start;
+}
+.price-card {
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:20px; padding:32px 28px;
+  text-align:center;
+  transition:transform 0.3s, box-shadow 0.3s;
+  position:relative;
+}
+.price-card:hover { transform:translateY(-4px); }
+.price-card.featured {
+  border-color:var(--gold);
+  box-shadow:0 0 60px rgba(201,168,76,0.1);
+  transform:scale(1.03);
+}
+.price-card.featured:hover { transform:scale(1.03) translateY(-4px); }
+.price-badge {
+  position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:var(--navy); padding:4px 16px; border-radius:12px;
+  font-size:0.75rem; font-weight:700;
+}
+.price-name {
+  font-size:1.1rem; font-weight:700; color:var(--white);
+  margin-bottom:8px; margin-top:8px;
+}
+.price-amount {
+  font-family:var(--serif-en);
+  font-size:2.6rem; font-weight:800;
+  color:var(--white); margin-bottom:4px;
+}
+.price-amount .currency { font-size:1.2rem; vertical-align:top; }
+.price-amount .period { font-size:0.85rem; color:var(--text-light); font-weight:400; }
+.price-amount .unit { font-size:0.85rem; color:var(--text-light); font-weight:400; }
+.price-desc { font-size:0.82rem; color:var(--text-light); margin-bottom:20px; }
+.price-features { list-style:none; text-align:left; margin-bottom:24px; }
+.price-features li {
+  padding:8px 0; font-size:0.85rem;
+  display:flex; align-items:flex-start; gap:8px;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.price-features li:last-child { border-bottom:none; }
+.price-features .icon { flex-shrink:0; margin-top:2px; }
+.price-btn {
+  display:block; width:100%; padding:12px;
+  border-radius:10px; font-weight:700;
+  font-size:0.95rem; cursor:pointer;
+  border:none; transition:all 0.3s;
+  text-decoration:none; text-align:center;
+}
+.price-btn-outline {
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--white);
+}
+.price-btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+.price-btn-gold {
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:var(--navy);
+}
+.price-btn-gold:hover { box-shadow:0 8px 30px rgba(201,168,76,0.35); transform:translateY(-1px); }
+.price-save { font-size:0.78rem; color:var(--accent-green); margin-top:8px; }
+
+/* ── Testimonial / Social Proof ── */
+.social-section { background:var(--navy-light); }
+.social-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.social-card {
+  background:var(--card-bg);
+  border:1px solid var(--border);
+  border-radius:16px; padding:28px;
+}
+.social-stars { color:var(--gold); font-size:0.9rem; margin-bottom:12px; letter-spacing:2px; }
+.social-text { font-size:0.9rem; color:var(--text); margin-bottom:16px; font-style:italic; line-height:1.7; }
+.social-author { display:flex; align-items:center; gap:10px; }
+.social-av {
+  width:36px;height:36px;border-radius:50%;
+  background:var(--glass); border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.8rem; color:var(--gold); font-weight:700;
+}
+.social-info .name { font-size:0.85rem; color:var(--white); font-weight:600; }
+.social-info .role { font-size:0.75rem; color:var(--text-light); }
+
+/* ── CTA Bottom ── */
+.cta-section {
+  padding:120px 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 100%, rgba(201,168,76,0.08), transparent 60%),
+    var(--navy);
+  text-align:center;
+}
+.cta-section h2 { margin-bottom:16px; }
+.cta-section p { max-width:560px; margin:0 auto 36px; }
+.cta-buttons { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+.btn-lg {
+  padding:16px 36px; border-radius:12px; font-size:1.05rem;
+  font-weight:700; text-decoration:none; cursor:pointer;
+  transition:all 0.3s; border:none;
+}
+.btn-gold {
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:var(--navy);
+}
+.btn-gold:hover { box-shadow:0 8px 40px rgba(201,168,76,0.35); transform:translateY(-2px); }
+.btn-outline {
+  background:transparent; border:1px solid var(--border);
+  color:var(--white);
+}
+.btn-outline:hover { border-color:var(--gold); color:var(--gold); }
+.cta-disclaimer {
+  margin-top:20px; font-size:0.75rem; color:var(--text-light);
+  max-width:480px; margin-left:auto; margin-right:auto;
+}
+
+/* ── Footer ── */
+footer {
+  background:var(--navy);
+  border-top:1px solid var(--border);
+  padding:48px 0 32px;
+}
+.footer-grid {
+  display:grid; grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:40px; margin-bottom:40px;
+}
+.footer-brand { max-width:280px; }
+.footer-brand .logo { margin-bottom:12px; }
+.footer-brand p { font-size:0.82rem; color:var(--text-light); }
+.footer-col h4 { font-size:0.85rem; color:var(--gold); margin-bottom:14px; font-family:var(--sans-cn); font-weight:600; }
+.footer-col a { display:block; color:var(--text-light); text-decoration:none; font-size:0.82rem; padding:4px 0; transition:color 0.2s; }
+.footer-col a:hover { color:var(--gold); }
+.footer-bottom {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:24px; border-top:1px solid rgba(255,255,255,0.04);
+  font-size:0.78rem; color:var(--text-light);
+}
+.footer-legal a { color:var(--text-light); text-decoration:none; margin-left:20px; }
+.footer-legal a:hover { color:var(--gold); }
+
+/* ── Animations ── */
+.fade-up {
+  opacity:0; transform:translateY(30px);
+  transition:opacity 0.6s, transform 0.6s;
+}
+.fade-up.visible { opacity:1; transform:translateY(0); }
+.delay-1 { transition-delay:0.1s; }
+.delay-2 { transition-delay:0.2s; }
+.delay-3 { transition-delay:0.3s; }
+.delay-4 { transition-delay:0.4s; }
+
+/* ── Mobile ── */
+@media(max-width:1024px) {
+  .hero .container { grid-template-columns:1fr; }
+  .hero-demo { display:none; }
+  .skills-grid { grid-template-columns:1fr; }
+  .verdict-masters { grid-template-columns:1fr 1fr; }
+  .pricing-grid { grid-template-columns:1fr 1fr; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:768px) {
+  section { padding:64px 0; }
+  .nav-links { display:none; }
+  .pain-grid { grid-template-columns:1fr; }
+  .verdict-masters { grid-template-columns:1fr; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .social-grid { grid-template-columns:1fr; }
+  .footer-grid { grid-template-columns:1fr; }
+  .verdict-demo-wrap { padding:24px; }
+  .verdict-demo-header { flex-direction:column; gap:16px; align-items:flex-start; }
+}
+
+/* ── Hidden lang content ── */
+[data-lang-en] { display:none; }
+body.en [data-lang-zh] { display:none; }
+body.en [data-lang-en] { display:initial; }
+body.en [data-lang-en].flex-item { display:flex; }
+body.en [data-lang-en].block-item { display:block; }
+body.en [data-lang-en].grid-item { display:grid; }
+body.en [data-lang-en].inline-item { display:inline; }
+</style>
+</head>
+<body>
+
+<!-- ════════ NAV ════════ -->
+<nav>
+  <div class="container">
+    <a href="#" class="logo">
+      <div class="logo-icon">M</div>
+      <span>MasterLens</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#pain"><span data-lang-zh>痛点</span><span data-lang-en>Pain Points</span></a></li>
+      <li><a href="#skills"><span data-lang-zh>四大能力</span><span data-lang-en>Features</span></a></li>
+      <li><a href="#verdict"><span data-lang-zh>大师裁决</span><span data-lang-en>Verdicts</span></a></li>
+      <li><a href="#compare"><span data-lang-zh>对比</span><span data-lang-en>Compare</span></a></li>
+      <li><a href="#pricing"><span data-lang-zh>定价</span><span data-lang-en>Pricing</span></a></li>
+      <li>
+        <div class="lang-toggle" id="langToggle">
+          <button class="lang-btn active" data-lang="zh">中</button>
+          <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+      </li>
+      <li><a href="#pricing" class="nav-cta"><span data-lang-zh>免费试用</span><span data-lang-en>Try Free</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════ HERO ════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        <span data-lang-zh>全球首个中英双语 AI 投资裁决引擎</span>
+        <span data-lang-en>World's First Bilingual AI Investment Verdict Engine</span>
+      </div>
+      <h1>
+        <span data-lang-zh>用大师的眼光<br>看每一只股票</span>
+        <span data-lang-en>See Every Stock<br>Through Masters' Eyes</span>
+        <span class="line2">
+          <span data-lang-zh>巴菲特 · 格雷厄姆 · 林奇 · 芒格 — 10位传奇投资大师，60秒AI裁决</span>
+          <span data-lang-en>Buffett · Graham · Lynch · Munger — 10 Legendary Masters, 60-Second AI Verdict</span>
+        </span>
+      </h1>
+      <p class="hero-sub">
+        <span data-lang-zh>输入股票代码，获得<strong>华尔街级深度报告</strong>、<strong>多大师框架裁决</strong>和<strong>可执行交易计划</strong>。所有数据均附原文引用，拒绝 AI 幻觉。</span>
+        <span data-lang-en>Enter any ticker for <strong>Wall Street-grade reports</strong>, <strong>multi-master framework verdicts</strong>, and <strong>actionable trade plans</strong>. Every data point cited to source. Zero AI hallucination.</span>
+      </p>
+      <div class="ticker-box">
+        <div class="ticker-box-inner">
+          <div class="ticker-label">
+            <span data-lang-zh>输入股票代码，开始你的大师级分析</span>
+            <span data-lang-en>Enter a stock ticker to begin your master-level analysis</span>
+          </div>
+          <div class="ticker-input-row">
+            <input type="text" class="ticker-input" id="tickerInput" placeholder="例如 AAPL、0700.HK、TSLA" maxlength="10">
+            <button class="ticker-go" id="tickerGo">
+              <span data-lang-zh>获取裁决</span>
+              <span data-lang-en>Get Verdict</span>
+            </button>
+          </div>
+          <div class="ticker-hint">
+            <span data-lang-zh>支持美股 · 港股 · A股</span>
+            <span data-lang-en>US · HK · CN Markets</span>
+            <span class="keys">
+              <span class="key">AAPL</span>
+              <span class="key">0700.HK</span>
+              <span class="key">BABA</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-demo">
+      <div class="demo-card">
+        <div class="demo-header">
+          <div class="demo-stock">
+            <div class="demo-stock-icon">🍎</div>
+            <div>
+              <div class="demo-stock-name">Apple Inc.</div>
+              <div class="demo-stock-ticker">NASDAQ: AAPL</div>
+            </div>
+          </div>
+          <div class="demo-price">
+            <div class="demo-price-val">$198.36</div>
+            <div class="demo-price-chg">+1.24%</div>
+          </div>
+        </div>
+        <div class="demo-verdicts">
+          <div class="verdict-row">
+            <div class="verdict-avatar" style="background:rgba(52,211,153,0.15);color:#34d399;">WB</div>
+            <div class="verdict-name"><strong data-lang-zh>巴菲特</strong><strong data-lang-en>Buffett</strong> · <span data-lang-zh>所有者收益模型</span><span data-lang-en>Owner Earnings</span></div>
+            <span class="verdict-tag tag-buy"><span data-lang-zh>买入</span><span data-lang-en>BUY</span></span>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-avatar" style="background:rgba(234,179,8,0.15);color:#eab308;">BG</div>
+            <div class="verdict-name"><strong data-lang-zh>格雷厄姆</strong><strong data-lang-en>Graham</strong> · <span data-lang-zh>安全边际</span><span data-lang-en>Margin of Safety</span></div>
+            <span class="verdict-tag tag-hold"><span data-lang-zh>观察</span><span data-lang-en>HOLD</span></span>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-avatar" style="background:rgba(96,165,250,0.15);color:#60a5fa;">PL</div>
+            <div class="verdict-name"><strong data-lang-zh>林奇</strong><strong data-lang-en>Lynch</strong> · PEG/GARP</div>
+            <span class="verdict-tag tag-hold"><span data-lang-zh>观察</span><span data-lang-en>HOLD</span></span>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-avatar" style="background:rgba(168,85,247,0.15);color:#a855f7;">PF</div>
+            <div class="verdict-name"><strong data-lang-zh>费雪</strong><strong data-lang-en>Fisher</strong> · <span data-lang-zh>精挑细选</span><span data-lang-en>Scuttlebutt</span></div>
+            <span class="verdict-tag tag-buy"><span data-lang-zh>买入</span><span data-lang-en>BUY</span></span>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-avatar" style="background:rgba(248,113,113,0.15);color:#f87171;">JG</div>
+            <div class="verdict-name"><strong data-lang-zh>格林布拉特</strong><strong data-lang-en>Greenblatt</strong> · <span data-lang-zh>神奇公式</span><span data-lang-en>Magic Formula</span></div>
+            <span class="verdict-tag tag-pass"><span data-lang-zh>放弃</span><span data-lang-en>PASS</span></span>
+          </div>
+          <div class="verdict-row">
+            <div class="verdict-avatar" style="background:rgba(52,211,153,0.15);color:#34d399;">CM</div>
+            <div class="verdict-name"><strong data-lang-zh>芒格</strong><strong data-lang-en>Munger</strong> · <span data-lang-zh>心智模式</span><span data-lang-en>Mental Models</span></div>
+            <span class="verdict-tag tag-buy"><span data-lang-zh>买入</span><span data-lang-en>BUY</span></span>
+          </div>
+        </div>
+        <div class="demo-consensus">
+          <div>
+            <div class="consensus-label"><span data-lang-zh>大师共识评分</span><span data-lang-en>Master Consensus</span></div>
+          </div>
+          <div style="text-align:right;">
+            <div class="consensus-score">7.2 / 10</div>
+            <div class="consensus-detail"><span data-lang-zh>3 买入 · 2 观察 · 1 放弃</span><span data-lang-en>3 Buy · 2 Hold · 1 Pass</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ TRUST BAR ════════ -->
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-items">
+      <div class="trust-item">
+        <div class="trust-icon">📑</div>
+        <span data-lang-zh>每条数据附原文引用</span><span data-lang-en>Every Data Point Cited</span>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🌏</div>
+        <span data-lang-zh>中英双语原生体验</span><span data-lang-en>Native Bilingual Experience</span>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🎓</div>
+        <span data-lang-zh>教育性内容，非投资建议</span><span data-lang-en>Educational Content, Not Financial Advice</span>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🔒</div>
+        <span data-lang-zh>数据安全加密</span><span data-lang-en>Encrypted & Secure</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ PAIN POINTS ════════ -->
+<section class="pain-section" id="pain">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="overline"><span data-lang-zh>市场痛点</span><span data-lang-en>Market Pain Points</span></div>
+      <h2><span data-lang-zh>投资者正在忍受的 <span class="gold">五大困境</span></span><span data-lang-en>The <span class="gold">5 Frustrations</span> Every Investor Faces</span></h2>
+      <p><span data-lang-zh>我们研究了数千条用户评论和社区反馈，找到了现有平台最致命的缺陷</span><span data-lang-en>We analyzed thousands of user reviews to find the critical failures of existing platforms</span></p>
+    </div>
+    <div class="pain-grid">
+      <!-- Pain 1 -->
+      <div class="pain-card fade-up">
+        <div class="pain-icon red">🤥</div>
+        <div class="pain-problem"><span data-lang-zh>行业通病</span><span data-lang-en>Industry-Wide</span></div>
+        <h3><span data-lang-zh>AI 幻觉与数据错误</span><span data-lang-en>AI Hallucinations & Data Errors</span></h3>
+        <p class="pain-desc"><span data-lang-zh>同花顺问财对同一股票同时给出"最适合"和"最不适合"长期持有的矛盾评级；查宁德时代却返回平安银行的数据。</span><span data-lang-en>Leading platforms generate contradictory ratings for the same stock and return wrong company's financials — destroying user trust.</span></p>
+        <div class="pain-solution">
+          <span class="check">✓</span>
+          <p><span data-lang-zh>MasterLens 方案：RAG 引用溯源架构，每个数字链接到年报原文页码</span><span data-lang-en>MasterLens: RAG-powered citations linking every number to annual report pages</span></p>
+        </div>
+      </div>
+      <!-- Pain 2 -->
+      <div class="pain-card fade-up delay-1">
+        <div class="pain-icon yellow">📊</div>
+        <div class="pain-problem"><span data-lang-zh>普遍反馈</span><span data-lang-en>Universal</span></div>
+        <h3><span data-lang-zh>信息过载，没有行动指导</span><span data-lang-en>Data Overload, No Action Plan</span></h3>
+        <p class="pain-desc"><span data-lang-zh>Morningstar、YCharts 数据密密麻麻，用户真正想知道的是："这只股票能不能买？买多少？何时止损？"</span><span data-lang-en>Platforms overwhelm with dashboards. Users want: "Should I buy? How much? Where's my stop-loss?"</span></p>
+        <div class="pain-solution">
+          <span class="check">✓</span>
+          <p><span data-lang-zh>MasterLens 方案：每份报告附带进场价位、止损逻辑、仓位建议的交易计划</span><span data-lang-en>MasterLens: Every report includes entry price, stop-loss logic, and position sizing</span></p>
+        </div>
+      </div>
+      <!-- Pain 3 -->
+      <div class="pain-card fade-up delay-2">
+        <div class="pain-icon blue">🔒</div>
+        <div class="pain-problem"><span data-lang-zh>信任危机</span><span data-lang-en>Trust Issue</span></div>
+        <h3><span data-lang-zh>付费墙不透明</span><span data-lang-en>Opaque Paywalls</span></h3>
+        <p class="pain-desc"><span data-lang-zh>Motley Fool、Seeking Alpha 付费前看不到产品价值，付费后发现功能与预期不符。这是金融订阅类产品的头号投诉。</span><span data-lang-en>Top complaint: can't see product value before paying. After subscribing, features don't match expectations.</span></p>
+        <div class="pain-solution">
+          <span class="check">✓</span>
+          <p><span data-lang-zh>MasterLens 方案：每月3份完整免费报告 + $9 单报告按需购买，先体验再决定</span><span data-lang-en>MasterLens: 3 free reports/month + $9 single report purchase. Try before you commit.</span></p>
+        </div>
+      </div>
+      <!-- Pain 4 -->
+      <div class="pain-card fade-up delay-3">
+        <div class="pain-icon green">🌐</div>
+        <div class="pain-problem"><span data-lang-zh>华语投资者</span><span data-lang-en>Chinese Investors</span></div>
+        <h3><span data-lang-zh>缺乏全球市场的中文专业工具</span><span data-lang-en>No Professional Chinese Tools for Global Markets</span></h3>
+        <p class="pain-desc"><span data-lang-zh>英文平台不支持中文；中文平台对美股/港股分析浅薄。巴菲特框架的中文化应用几乎为零。</span><span data-lang-en>English platforms don't support Chinese; Chinese platforms lack depth for US/HK stocks. Zero Chinese-language master frameworks.</span></p>
+        <div class="pain-solution">
+          <span class="check">✓</span>
+          <p><span data-lang-zh>MasterLens 方案：原生双语，非机器翻译。大师语录英中对照，术语双语标注</span><span data-lang-en>MasterLens: Native bilingual content (not machine-translated). Dual-language quotes & terms.</span></p>
+        </div>
+      </div>
+      <!-- Pain 5 -->
+      <div class="pain-card fade-up delay-4">
+        <div class="pain-icon purple">⚖️</div>
+        <div class="pain-problem"><span data-lang-zh>合规风险</span><span data-lang-en>Compliance Risk</span></div>
+        <h3><span data-lang-zh>AI 荐股的法律雷区</span><span data-lang-en>AI Stock-Picking Legal Risks</span></h3>
+        <p class="pain-desc"><span data-lang-zh>雪球因 AI 荐股被罚 8,300 万元。用户对 AI 直接荐股的信任度骤降，但对"教育性分析框架"的需求反而上升。</span><span data-lang-en>A major platform was fined ¥83M for AI stock-picking. Trust in direct recommendations plummeted, but demand for educational frameworks surged.</span></p>
+        <div class="pain-solution">
+          <span class="check">✓</span>
+          <p><span data-lang-zh>MasterLens 方案：定位"教育性投资框架"，合规透明，教你用大师思维自主决策</span><span data-lang-en>MasterLens: Positioned as "educational investment framework" — compliant, transparent, teaching master-level thinking.</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ FOUR SKILLS ════════ -->
+<section class="skills-section" id="skills">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="overline"><span data-lang-zh>核心能力</span><span data-lang-en>Core Capabilities</span></div>
+      <h2><span data-lang-zh>四大引擎，<span class="gold">一站整合</span></span><span data-lang-en>Four Engines, <span class="gold">One Platform</span></span></h2>
+      <p><span data-lang-zh>市场上没有任何平台同时具备这四项能力——这是 MasterLens 的唯一性所在</span><span data-lang-en>No other platform combines all four — this is what makes MasterLens unique</span></p>
+    </div>
+    <div class="skills-grid">
+      <!-- Skill 1 -->
+      <div class="skill-card fade-up">
+        <div class="skill-number">01</div>
+        <div class="skill-icon-wrap" style="background:rgba(96,165,250,0.12);">📈</div>
+        <h3><span data-lang-zh>华尔街级深度报告</span><span data-lang-en>Wall Street Analysis</span></h3>
+        <div class="skill-en">wallstreet-analysis</div>
+        <p><span data-lang-zh>完整的机构级研究报告——商业模式、财务健康、护城河评分、DCF 估值、多空辩论、财报解读，带明确评级与目标价。</span><span data-lang-en>Institutional-grade reports: business model, financial health, moat scoring, DCF valuation, bull/bear debate, with clear ratings & price targets.</span></p>
+        <div class="skill-tags">
+          <span class="skill-tag">DCF</span>
+          <span class="skill-tag"><span data-lang-zh>护城河</span><span data-lang-en>Moat</span></span>
+          <span class="skill-tag"><span data-lang-zh>多空辩论</span><span data-lang-en>Bull/Bear</span></span>
+          <span class="skill-tag"><span data-lang-zh>财报解读</span><span data-lang-en>Earnings</span></span>
+        </div>
+      </div>
+      <!-- Skill 2 -->
+      <div class="skill-card fade-up delay-1">
+        <div class="skill-number">02</div>
+        <div class="skill-icon-wrap" style="background:rgba(201,168,76,0.12);">🏛️</div>
+        <h3><span data-lang-zh>大师框架裁决引擎</span><span data-lang-en>Master Verdict Engine</span></h3>
+        <div class="skill-en">investment-masters</div>
+        <p><span data-lang-zh>10位传奇大师的分析框架——巴菲特、芒格、格雷厄姆、林奇、费雪、格林布拉特、达利欧、伍德、博格尔，以大师语气输出裁决。</span><span data-lang-en>10 legendary frameworks — Buffett, Munger, Graham, Lynch, Fisher, Greenblatt, Dalio, Wood, Bogle — verdicts delivered in each master's voice.</span></p>
+        <div class="skill-tags">
+          <span class="skill-tag"><span data-lang-zh>安全边际</span><span data-lang-en>Margin of Safety</span></span>
+          <span class="skill-tag">PEG/GARP</span>
+          <span class="skill-tag"><span data-lang-zh>神奇公式</span><span data-lang-en>Magic Formula</span></span>
+          <span class="skill-tag"><span data-lang-zh>共识评分</span><span data-lang-en>Consensus</span></span>
+        </div>
+      </div>
+      <!-- Skill 3 -->
+      <div class="skill-card fade-up delay-2">
+        <div class="skill-number">03</div>
+        <div class="skill-icon-wrap" style="background:rgba(52,211,153,0.12);">🎯</div>
+        <h3><span data-lang-zh>交易实战教练</span><span data-lang-en>Trading Coach</span></h3>
+        <div class="skill-en">trading-coach</div>
+        <p><span data-lang-zh>从机会扫描到交易复盘的完整执行工作流——进场价位、止损逻辑、止盈目标、仓位建议，教育性模拟框架。</span><span data-lang-en>Complete execution workflow — entry prices, stop-loss logic, profit targets, position sizing. Educational simulation framework.</span></p>
+        <div class="skill-tags">
+          <span class="skill-tag"><span data-lang-zh>进场价位</span><span data-lang-en>Entry</span></span>
+          <span class="skill-tag"><span data-lang-zh>止损</span><span data-lang-en>Stop-Loss</span></span>
+          <span class="skill-tag"><span data-lang-zh>仓位管理</span><span data-lang-en>Position Size</span></span>
+          <span class="skill-tag"><span data-lang-zh>回测</span><span data-lang-en>Backtest</span></span>
+        </div>
+      </div>
+      <!-- Skill 4 -->
+      <div class="skill-card fade-up delay-3">
+        <div class="skill-number">04</div>
+        <div class="skill-icon-wrap" style="background:rgba(168,85,247,0.12);">⚡</div>
+        <h3><span data-lang-zh>交易提示框架</span><span data-lang-en>Trading Prompts</span></h3>
+        <div class="skill-en">trading-prompts</div>
+        <p><span data-lang-zh>7大交易场景的结构化分析——选股挖掘、图表分析、新闻驱动、回测验证、组合风险、交易复盘、日清单。降低新用户门槛。</span><span data-lang-en>7 structured trading scenarios — stock screening, chart analysis, news-driven, backtesting, portfolio risk, trade review, daily checklist.</span></p>
+        <div class="skill-tags">
+          <span class="skill-tag"><span data-lang-zh>选股</span><span data-lang-en>Screening</span></span>
+          <span class="skill-tag"><span data-lang-zh>图表</span><span data-lang-en>Charts</span></span>
+          <span class="skill-tag"><span data-lang-zh>新闻驱动</span><span data-lang-en>News</span></span>
+          <span class="skill-tag"><span data-lang-zh>复盘</span><span data-lang-en>Review</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ MASTER VERDICT DEMO ════════ -->
+<section class="verdict-section" id="verdict">
+  <div class="container">
+    <div class="verdict-demo-wrap fade-up">
+      <div class="verdict-demo-header">
+        <div>
+          <div class="overline" style="text-align:left;margin-bottom:8px;font-size:0.8rem;color:var(--gold);text-transform:uppercase;letter-spacing:3px;font-weight:600;">
+            <span data-lang-zh>产品演示</span><span data-lang-en>Live Demo</span>
+          </div>
+          <h2><span data-lang-zh>大师裁决引擎实况</span><span data-lang-en>Master Verdict Engine in Action</span></h2>
+          <p><span data-lang-zh>以 Apple (AAPL) 为例，看6位大师如何各抒己见</span><span data-lang-en>See how 6 masters independently evaluate Apple (AAPL)</span></p>
+        </div>
+        <div class="verdict-stock-badge">
+          <span style="font-size:1.4rem;">🍎</span>
+          <div>
+            <div style="font-family:var(--mono);color:var(--white);font-weight:600;">AAPL</div>
+            <div style="font-size:0.78rem;color:var(--text-light);">$198.36 · NASDAQ</div>
+          </div>
+        </div>
+      </div>
+      <div class="verdict-masters">
+        <!-- Buffett -->
+        <div class="master-card fade-up">
+          <div class="master-top">
+            <div class="master-av" style="background:rgba(52,211,153,0.15);color:#34d399;">WB</div>
+            <div class="master-meta">
+              <h4><span data-lang-zh>沃伦·巴菲特</span><span data-lang-en>Warren Buffett</span></h4>
+              <span><span data-lang-zh>所有者收益模型</span><span data-lang-en>Owner Earnings Model</span></span>
+            </div>
+          </div>
+          <div class="master-quote">
+            <span data-lang-zh>「苹果的服务业务护城河极深，品牌忠诚度是我最看重的。当前估值虽非便宜，但长期持有的信心不变。」</span>
+            <span data-lang-en>"Apple's services moat is extraordinary. Brand loyalty is what I value most. Valuation isn't cheap, but conviction for long-term holding remains."</span>
+          </div>
+          <div class="master-verdict">
+            <span class="verdict-tag tag-buy" style="font-size:0.85rem;padding:5px 16px;"><span data-lang-zh>买入</span><span data-lang-en>BUY</span></span>
+            <span style="font-size:0.78rem;color:var(--text-light);">8.5/10</span>
+          </div>
+        </div>
+        <!-- Graham -->
+        <div class="master-card fade-up delay-1">
+          <div class="master-top">
+            <div class="master-av" style="background:rgba(234,179,8,0.15);color:#eab308;">BG</div>
+            <div class="master-meta">
+              <h4><span data-lang-zh>本杰明·格雷厄姆</span><span data-lang-en>Benjamin Graham</span></h4>
+              <span><span data-lang-zh>安全边际 · 格雷厄姆数值</span><span data-lang-en>Margin of Safety · Graham Number</span></span>
+            </div>
+          </div>
+          <div class="master-quote">
+            <span data-lang-zh>「按格雷厄姆数值计算，当前股价溢价42%。安全边际不足，我会等待更好的价格。」</span>
+            <span data-lang-en>"By Graham Number, shares trade at a 42% premium. Insufficient margin of safety. I'd wait for a better price."</span>
+          </div>
+          <div class="master-verdict">
+            <span class="verdict-tag tag-hold" style="font-size:0.85rem;padding:5px 16px;"><span data-lang-zh>观察</span><span data-lang-en>HOLD</span></span>
+            <span style="font-size:0.78rem;color:var(--text-light);">5.2/10</span>
+          </div>
+        </div>
+        <!-- Lynch -->
+        <div class="master-card fade-up delay-2">
+          <div class="master-top">
+            <div class="master-av" style="background:rgba(96,165,250,0.15);color:#60a5fa;">PL</div>
+            <div class="master-meta">
+              <h4><span data-lang-zh>彼得·林奇</span><span data-lang-en>Peter Lynch</span></h4>
+              <span>PEG / GARP</span>
+            </div>
+          </div>
+          <div class="master-quote">
+            <span data-lang-zh>「PEG 比率2.1，不符合 GARP 标准。但增长可见度极高，服务收入的复合增长令人瞩目。」</span>
+            <span data-lang-en>"PEG ratio 2.1 doesn't meet GARP criteria. But growth visibility is exceptional — services revenue CAGR is impressive."</span>
+          </div>
+          <div class="master-verdict">
+            <span class="verdict-tag tag-hold" style="font-size:0.85rem;padding:5px 16px;"><span data-lang-zh>观察</span><span data-lang-en>HOLD</span></span>
+            <span style="font-size:0.78rem;color:var(--text-light);">6.0/10</span>
+          </div>
+        </div>
+        <!-- Fisher -->
+        <div class="master-card fade-up delay-1">
+          <div class="master-top">
+            <div class="master-av" style="background:rgba(168,85,247,0.15);color:#a855f7;">PF</div>
+            <div class="master-meta">
+              <h4><span data-lang-zh>菲利普·费雪</span><span data-lang-en>Philip Fisher</span></h4>
+              <span><span data-lang-zh>精挑细选十五要点</span><span data-lang-en>Scuttlebutt 15 Points</span></span>
+            </div>
+          </div>
+          <div class="master-quote">
+            <span data-lang-zh>「研发投入持续增长，管理层对AI的战略布局清晰。符合我对杰出公司的定义。」</span>
+            <span data-lang-en>"R&D investment keeps growing. Management's AI strategy is clear. Meets my definition of an outstanding company."</span>
+          </div>
+          <div class="master-verdict">
+            <span class="verdict-tag tag-buy" style="font-size:0.85rem;padding:5px 16px;"><span data-lang-zh>买入</span><span data-lang-en>BUY</span></span>
+            <span style="font-size:0.78rem;color:var(--text-light);">8.0/10</span>
+          </div>
+        </div>
+        <!-- Greenblatt -->
+        <div class="master-card fade-up delay-2">
+          <div class="master-top">
+            <div class="master-av" style="background:rgba(248,113,113,0.15);color:#f87171;">JG</div>
+            <div class="master-meta">
+              <h4><span data-lang-zh>乔尔·格林布拉特</span><span data-lang-en>Joel Greenblatt</span></h4>
+              <span><span data-lang-zh>神奇公式</span><span data-lang-en>Magic Formula</span></span>
+            </div>
+          </div>
+          <div class="master-quote">
+            <span data-lang-zh>「资本回报率优秀，但盈利收益率排名靠后。按神奇公式标准，有更便宜的优质标的。」</span>
+            <span data-lang-en>"Capital returns are strong, but earnings yield ranks poorly. By Magic Formula criteria, cheaper quality targets exist."</span>
+          </div>
+          <div class="master-verdict">
+            <span class="verdict-tag tag-pass" style="font-size:0.85rem;padding:5px 16px;"><span data-lang-zh>放弃</span><span data-lang-en>PASS</span></span>
+            <span style="font-size:0.78rem;color:var(--text-light);">4.8/10</span>
+          </div>
+        </div>
+        <!-- Munger -->
+        <div class="master-card fade-up delay-3">
+          <div class="master-top">
+            <div class="master-av" style="background:rgba(201,168,76,0.15);color:var(--gold);">CM</div>
+            <div class="master-meta">
+              <h4><span data-lang-zh>查理·芒格</span><span data-lang-en>Charlie Munger</span></h4>
+              <span><span data-lang-zh>心智模式清单</span><span data-lang-en>Mental Models Checklist</span></span>
+            </div>
+          </div>
+          <div class="master-quote">
+            <span data-lang-zh>「用逆向思维看，很难想象苹果生态在十年内被颠覆。为优质公司支付合理溢价是明智的。」</span>
+            <span data-lang-en>"Inverting: it's hard to imagine Apple's ecosystem disrupted within a decade. Paying a fair premium for quality is wise."</span>
+          </div>
+          <div class="master-verdict">
+            <span class="verdict-tag tag-buy" style="font-size:0.85rem;padding:5px 16px;"><span data-lang-zh>买入</span><span data-lang-en>BUY</span></span>
+            <span style="font-size:0.78rem;color:var(--text-light);">8.2/10</span>
+          </div>
+        </div>
+      </div>
+      <!-- Consensus -->
+      <div class="verdict-big">
+        <div style="display:flex;justify-content:center;gap:48px;align-items:center;flex-wrap:wrap;">
+          <div>
+            <div class="verdict-big-score">7.2 <span style="font-size:1.2rem;">/10</span></div>
+            <div class="verdict-big-label"><span data-lang-zh>大师共识评分</span><span data-lang-en>Master Consensus Score</span></div>
+          </div>
+          <div class="verdict-breakdown">
+            <div class="vb-item"><div class="vb-num" style="color:var(--accent-green);">3</div><div class="vb-label"><span data-lang-zh>买入</span><span data-lang-en>Buy</span></div></div>
+            <div class="vb-item"><div class="vb-num" style="color:#eab308;">2</div><div class="vb-label"><span data-lang-zh>观察</span><span data-lang-en>Hold</span></div></div>
+            <div class="vb-item"><div class="vb-num" style="color:var(--accent-red);">1</div><div class="vb-label"><span data-lang-zh>放弃</span><span data-lang-en>Pass</span></div></div>
+          </div>
+          <div style="text-align:left;">
+            <div style="font-size:0.82rem;color:var(--text-light);margin-bottom:4px;"><span data-lang-zh>数据来源</span><span data-lang-en>Data Sources</span></div>
+            <div style="font-size:0.78rem;color:var(--text-light);">Apple 10-K FY2024, p.31-45<br>Q4 2024 Earnings Call Transcript</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ COMPARISON TABLE ════════ -->
+<section class="compare-section" id="compare">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="overline"><span data-lang-zh>竞品对比</span><span data-lang-en>Comparison</span></div>
+      <h2><span data-lang-zh>为什么选择 <span class="gold">MasterLens</span>？</span><span data-lang-en>Why <span class="gold">MasterLens</span>?</span></h2>
+    </div>
+    <div class="compare-table-wrap fade-up">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th><span data-lang-zh>功能</span><span data-lang-en>Feature</span></th>
+            <th class="ours">MasterLens 大师镜</th>
+            <th>Seeking Alpha</th>
+            <th>Morningstar</th>
+            <th><span data-lang-zh>同花顺</span><span data-lang-en>10jqka</span></th>
+            <th>invest-like</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span data-lang-zh>多大师框架裁决</span><span data-lang-en>Multi-Master Verdicts</span></td>
+            <td class="ours"><span class="yes">✓ 10位大师</span></td>
+            <td><span class="no">✗</span></td>
+            <td><span class="no">✗</span></td>
+            <td><span class="no">✗</span></td>
+            <td><span class="partial">△ 仅英文</span></td>
+          </tr>
+          <tr>
+            <td><span data-lang-zh>华尔街级报告</span><span data-lang-en>Institutional Reports</span></td>
+            <td class="ours"><span class="yes">✓ 完整DCF+评级</span></td>
+            <td><span class="partial">△ 需$2,149/年</span></td>
+            <td><span class="yes">✓</span></td>
+            <td><span class="no">✗</span></td>
+            <td><span class="no">✗</span></td>
+          </tr>
+          <tr>
+            <td><span data-lang-zh>可执行交易计划</span><span data-lang-en>Actionable Trade Plans</span></td>
+            <td class="ours"><span class="yes">✓ 进场/止损/仓位</span></td>
+            <td><span class="no">✗</span></td>
+            <td><span class="no">✗</span></td>
+            <td><span class="no">✗</span></td>
+            <td><span class="no">✗</span></td>
+          </tr>
+          <tr>
+            <td><span data-lang-zh>引用溯源（防幻觉）</span><span data-lang-en>Citation Sourcing</span></td>
+            <td class="ours"><span class="yes">✓ RAG架构</span></td>
+            <td><span class="partial">△ 部分</span></td>
+            <td><span class="yes">✓</span></td>
+            <td><span class="no">✗ 幻觉频出</span></td>
+            <td><span class="no">✗</span></td>
+          </tr>
+          <tr>
+            <td><span data-lang-zh>中英双语</span><span data-lang-en>Chinese + English</span></td>
+            <td class="ours"><span class="yes">✓ 原生双语</span></td>
+            <td><span class="no">✗ 仅英文</span></td>
+            <td><span class="no">✗ 仅英文</span></td>
+            <td><span class="partial">△ 仅中文</span></td>
+            <td><span class="no">✗ 仅英文</span></td>
+          </tr>
+          <tr>
+            <td><span data-lang-zh>年费</span><span data-lang-en>Annual Price</span></td>
+            <td class="ours"><span class="yes">$179/年</span></td>
+            <td>$299–$2,149</td>
+            <td>$249</td>
+            <td>¥388–¥998</td>
+            <td>€180/年</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ PRICING ════════ -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="overline"><span data-lang-zh>定价方案</span><span data-lang-en>Pricing</span></div>
+      <h2><span data-lang-zh>选择适合你的 <span class="gold">投资伙伴</span></span><span data-lang-en>Choose Your <span class="gold">Investment Partner</span></span></h2>
+      <p><span data-lang-zh>比 Seeking Alpha 便宜 40%，比 Morningstar 便宜 28%，功能更强大</span><span data-lang-en>40% cheaper than Seeking Alpha, 28% less than Morningstar, with more features</span></p>
+    </div>
+    <div class="pricing-grid">
+      <!-- Free -->
+      <div class="price-card fade-up">
+        <div class="price-name"><span data-lang-zh>免费版</span><span data-lang-en>Free</span></div>
+        <div class="price-amount"><span class="currency">$</span>0</div>
+        <div class="price-desc"><span data-lang-zh>体验大师级分析</span><span data-lang-en>Experience master-level analysis</span></div>
+        <ul class="price-features">
+          <li><span class="icon yes">✓</span><span data-lang-zh>每月 3 份完整报告</span><span data-lang-en>3 full reports/month</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>5 维度基础评分</span><span data-lang-en>5-dimension basic scores</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>10 只自选股跟踪</span><span data-lang-en>10-stock watchlist</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>每月 2 次大师快速判断</span><span data-lang-en>2 master quick verdicts/mo</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>教育内容全部开放</span><span data-lang-en>Full educational content</span></li>
+        </ul>
+        <a href="#" class="price-btn price-btn-outline"><span data-lang-zh>免费开始</span><span data-lang-en>Start Free</span></a>
+      </div>
+      <!-- Single Report -->
+      <div class="price-card fade-up delay-1">
+        <div class="price-name"><span data-lang-zh>单报告</span><span data-lang-en>Single Report</span></div>
+        <div class="price-amount"><span class="currency">$</span>9<span class="unit"> /<span data-lang-zh>份</span><span data-lang-en>report</span></span></div>
+        <div class="price-desc"><span data-lang-zh>只分析一只股票？按需购买</span><span data-lang-en>Just need one stock? Pay as you go</span></div>
+        <ul class="price-features">
+          <li><span class="icon yes">✓</span><span data-lang-zh>完整深度报告</span><span data-lang-en>Full deep analysis report</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>大师框架裁决 + DCF</span><span data-lang-en>Master verdicts + DCF</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>交易计划（进场/止损/仓位）</span><span data-lang-en>Trade plan (entry/stop/size)</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>30 天访问权</span><span data-lang-en>30-day access</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>PDF 导出</span><span data-lang-en>PDF export</span></li>
+        </ul>
+        <a href="#" class="price-btn price-btn-outline"><span data-lang-zh>购买单份报告</span><span data-lang-en>Buy Single Report</span></a>
+      </div>
+      <!-- Pro -->
+      <div class="price-card featured fade-up delay-2">
+        <div class="price-badge"><span data-lang-zh>最受欢迎</span><span data-lang-en>Most Popular</span></div>
+        <div class="price-name">Pro</div>
+        <div class="price-amount"><span class="currency">$</span>19<span class="period"> /<span data-lang-zh>月</span><span data-lang-en>mo</span></span></div>
+        <div class="price-desc"><span data-lang-zh>或 $179/年（省 25%）</span><span data-lang-en>or $179/year (save 25%)</span></div>
+        <ul class="price-features">
+          <li><span class="icon yes">✓</span><span data-lang-zh>无限报告生成</span><span data-lang-en>Unlimited reports</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>多框架完整裁决</span><span data-lang-en>Full multi-framework verdicts</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>AI 对话（含引用溯源）</span><span data-lang-en>AI chat with citations</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>组合 X-Ray 透视</span><span data-lang-en>Portfolio X-Ray</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>完整交易执行层</span><span data-lang-en>Full trade execution layer</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>无限自选股</span><span data-lang-en>Unlimited watchlist</span></li>
+        </ul>
+        <a href="#" class="price-btn price-btn-gold"><span data-lang-zh>升级到 Pro</span><span data-lang-en>Upgrade to Pro</span></a>
+        <div class="price-save"><span data-lang-zh>比 Seeking Alpha 便宜 40%</span><span data-lang-en>40% cheaper than Seeking Alpha</span></div>
+      </div>
+      <!-- Lifetime -->
+      <div class="price-card fade-up delay-3">
+        <div class="price-name"><span data-lang-zh>创始会员终身版</span><span data-lang-en>Founding Member</span></div>
+        <div class="price-amount"><span class="currency">$</span>299</div>
+        <div class="price-desc"><span data-lang-zh>一次付费，永久使用</span><span data-lang-en>One-time payment, lifetime access</span></div>
+        <ul class="price-features">
+          <li><span class="icon yes">✓</span><span data-lang-zh>Pro 全部功能</span><span data-lang-en>All Pro features</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>永久访问权</span><span data-lang-en>Lifetime access</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>优先体验新功能</span><span data-lang-en>Early access to new features</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>创始会员专属标识</span><span data-lang-en>Founding member badge</span></li>
+          <li><span class="icon yes">✓</span><span data-lang-zh>限量 500 名额</span><span data-lang-en>Limited to 500 members</span></li>
+        </ul>
+        <a href="#" class="price-btn price-btn-outline"><span data-lang-zh>锁定终身价格</span><span data-lang-en>Lock Lifetime Price</span></a>
+        <div class="price-save"><span data-lang-zh>相当于不到 1.5 年 Pro 费用</span><span data-lang-en>Less than 1.5 years of Pro</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ SOCIAL PROOF ════════ -->
+<section class="social-section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <div class="overline"><span data-lang-zh>用户反馈</span><span data-lang-en>Testimonials</span></div>
+      <h2><span data-lang-zh>早期用户怎么说</span><span data-lang-en>What Early Users Say</span></h2>
+    </div>
+    <div class="social-grid">
+      <div class="social-card fade-up">
+        <div class="social-stars">★★★★★</div>
+        <p class="social-text"><span data-lang-zh>「用了同花顺的AI两年，不断被错误数据误导。MasterLens 每个数字都能追溯到原文，终于有一个值得信赖的工具了。」</span><span data-lang-en>"After 2 years of being misled by inaccurate AI data, MasterLens traces every number to source documents. Finally a tool I can trust."</span></p>
+        <div class="social-author">
+          <div class="social-av">L</div>
+          <div class="social-info">
+            <div class="name"><span data-lang-zh>林先生</span><span data-lang-en>Mr. Lin</span></div>
+            <div class="role"><span data-lang-zh>新加坡 · 科技业投资者</span><span data-lang-en>Singapore · Tech Investor</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="social-card fade-up delay-1">
+        <div class="social-stars">★★★★★</div>
+        <p class="social-text"><span data-lang-zh>「大师裁决引擎是杀手级功能。看到巴菲特和格雷厄姆对同一只股票持相反意见时，你才真正理解了投资的多维度性。」</span><span data-lang-en>"The Master Verdict Engine is killer. When Buffett and Graham disagree on the same stock, you truly understand multi-dimensional investing."</span></p>
+        <div class="social-author">
+          <div class="social-av">C</div>
+          <div class="social-info">
+            <div class="name"><span data-lang-zh>陈女士</span><span data-lang-en>Ms. Chen</span></div>
+            <div class="role"><span data-lang-zh>吉隆坡 · 价值投资者</span><span data-lang-en>Kuala Lumpur · Value Investor</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="social-card fade-up delay-2">
+        <div class="social-stars">★★★★★</div>
+        <p class="social-text"><span data-lang-zh>「终于不用在英文平台和中文平台之间来回切换了。报告里巴菲特的英文原话+中文翻译，这才是双语该有的样子。」</span><span data-lang-en>"Finally no more switching between English and Chinese platforms. Original English quotes with Chinese translations — this is what bilingual should look like."</span></p>
+        <div class="social-author">
+          <div class="social-av">W</div>
+          <div class="social-info">
+            <div class="name"><span data-lang-zh>王先生</span><span data-lang-en>Mr. Wang</span></div>
+            <div class="role"><span data-lang-zh>悉尼 · 全球配置投资者</span><span data-lang-en>Sydney · Global Allocation Investor</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════ BOTTOM CTA ════════ -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="fade-up">
+      <span data-lang-zh>60秒，用大师眼光<br>看透一只股票</span>
+      <span data-lang-en>60 Seconds to See<br>Through Masters' Eyes</span>
+    </h2>
+    <p class="fade-up"><span data-lang-zh>输入任意股票代码，获得巴菲特、格雷厄姆、林奇等10位大师的独立裁决。每月3次免费，无需信用卡。</span><span data-lang-en>Enter any ticker for independent verdicts from Buffett, Graham, Lynch and 7 more masters. 3 free reports/month, no credit card required.</span></p>
+    <div class="cta-buttons fade-up">
+      <a href="#" class="btn-lg btn-gold"><span data-lang-zh>免费开始分析</span><span data-lang-en>Start Free Analysis</span></a>
+      <a href="#verdict" class="btn-lg btn-outline"><span data-lang-zh>查看演示</span><span data-lang-en>See Demo</span></a>
+    </div>
+    <p class="cta-disclaimer"><span data-lang-zh>本平台提供的所有分析内容均为教育性质，不构成投资建议。投资有风险，入市需谨慎。</span><span data-lang-en>All analysis provided is educational in nature and does not constitute investment advice. Investing involves risk.</span></p>
+  </div>
+</section>
+
+<!-- ════════ FOOTER ════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <div class="logo-icon">M</div>
+          <span>MasterLens</span>
+        </a>
+        <p style="margin-top:12px;"><span data-lang-zh>大师镜 — 用大师的眼光看每一只股票。全球首个中英双语 AI 投资裁决引擎。</span><span data-lang-en>See every stock through masters' eyes. The world's first bilingual AI investment verdict engine.</span></p>
+      </div>
+      <div class="footer-col">
+        <h4><span data-lang-zh>产品</span><span data-lang-en>Product</span></h4>
+        <a href="#skills"><span data-lang-zh>四大能力</span><span data-lang-en>Features</span></a>
+        <a href="#verdict"><span data-lang-zh>大师裁决</span><span data-lang-en>Verdicts</span></a>
+        <a href="#pricing"><span data-lang-zh>定价方案</span><span data-lang-en>Pricing</span></a>
+        <a href="#"><span data-lang-zh>API 接口</span><span data-lang-en>API</span></a>
+      </div>
+      <div class="footer-col">
+        <h4><span data-lang-zh>资源</span><span data-lang-en>Resources</span></h4>
+        <a href="#"><span data-lang-zh>大师框架指南</span><span data-lang-en>Framework Guide</span></a>
+        <a href="#"><span data-lang-zh>投资教育</span><span data-lang-en>Education</span></a>
+        <a href="#"><span data-lang-zh>帮助中心</span><span data-lang-en>Help Center</span></a>
+        <a href="#"><span data-lang-zh>博客</span><span data-lang-en>Blog</span></a>
+      </div>
+      <div class="footer-col">
+        <h4><span data-lang-zh>公司</span><span data-lang-en>Company</span></h4>
+        <a href="#"><span data-lang-zh>关于我们</span><span data-lang-en>About</span></a>
+        <a href="#"><span data-lang-zh>联系我们</span><span data-lang-en>Contact</span></a>
+        <a href="#"><span data-lang-zh>合规声明</span><span data-lang-en>Compliance</span></a>
+        <a href="#">Twitter / X</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MasterLens. <span data-lang-zh>保留所有权利。</span><span data-lang-en>All rights reserved.</span></span>
+      <div class="footer-legal">
+        <a href="#"><span data-lang-zh>隐私政策</span><span data-lang-en>Privacy</span></a>
+        <a href="#"><span data-lang-zh>服务条款</span><span data-lang-en>Terms</span></a>
+        <a href="#"><span data-lang-zh>免责声明</span><span data-lang-en>Disclaimer</span></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Language toggle
+const langToggle = document.getElementById('langToggle');
+langToggle.addEventListener('click', (e) => {
+  const btn = e.target.closest('.lang-btn');
+  if (!btn) return;
+  const lang = btn.dataset.lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.body.classList.toggle('en', lang === 'en');
+});
+
+// Scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Ticker input interaction
+const tickerInput = document.getElementById('tickerInput');
+const tickerGo = document.getElementById('tickerGo');
+const tickers = ['AAPL','TSLA','MSFT','GOOGL','AMZN','NVDA','0700.HK','BABA','9988.HK','META'];
+tickerGo.addEventListener('click', () => {
+  const val = tickerInput.value.trim().toUpperCase();
+  if (val) {
+    tickerGo.innerHTML = '<span data-lang-zh>分析中...</span><span data-lang-en>Analyzing...</span>';
+    if(document.body.classList.contains('en')){
+      tickerGo.textContent='Analyzing...';
+    } else {
+      tickerGo.textContent='分析中...';
+    }
+    setTimeout(() => {
+      document.getElementById('verdict').scrollIntoView({ behavior: 'smooth' });
+      if(document.body.classList.contains('en')){
+        tickerGo.textContent='Get Verdict';
+      } else {
+        tickerGo.textContent='获取裁决';
+      }
+    }, 1200);
+  }
+});
+tickerInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') tickerGo.click();
+});
+
+// Typing animation for ticker placeholder
+let placeholderIdx = 0;
+const placeholders_zh = ['例如 AAPL','例如 TSLA','例如 0700.HK','例如 NVDA','例如 BABA'];
+const placeholders_en = ['e.g. AAPL','e.g. TSLA','e.g. 0700.HK','e.g. NVDA','e.g. BABA'];
+setInterval(() => {
+  placeholderIdx = (placeholderIdx + 1) % placeholders_zh.length;
+  const isEn = document.body.classList.contains('en');
+  tickerInput.placeholder = isEn ? placeholders_en[placeholderIdx] : placeholders_zh[placeholderIdx];
+}, 3000);
+
+// Nav background on scroll
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 50) {
+    nav.style.background = 'rgba(10,22,40,0.95)';
+  } else {
+    nav.style.background = 'rgba(10,22,40,0.85)';
+  }
+});
+</script>
+</body>
+</html>
