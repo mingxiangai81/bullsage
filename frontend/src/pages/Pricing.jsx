@@ -22,7 +22,7 @@ export default function Pricing() {
   return (
     <div className="pt-24 pb-16 max-w-5xl mx-auto px-6">
       <div className="text-center mb-12">
-        <h1 className="text-3xl font-serif font-bold text-white mb-3">选择你的投资伙伴</h1>
+        <h1 className="text-3xl font-bold text-white mb-3">选择你的投资伙伴</h1>
         <p className="text-gray-400">比 Seeking Alpha 便宜 40%，功能更强大</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -30,7 +30,7 @@ export default function Pricing() {
           <div key={plan.id} className={`rounded-2xl p-7 text-center relative transition hover:-translate-y-1 ${plan.featured ? 'bg-white/[0.04] border-2 border-[var(--gold)] shadow-lg shadow-[var(--gold)]/5 scale-[1.02]' : 'bg-white/[0.02] border border-white/10'}`}>
             {plan.featured && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[var(--gold)] to-[var(--gold-dim)] text-[var(--navy)] px-4 py-1 rounded-full text-xs font-bold">最受欢迎</div>}
             <h3 className="text-white font-bold text-lg mt-2">{plan.name}</h3>
-            <div className="text-3xl font-serif font-black text-white my-2">{plan.price}<span className="text-sm text-gray-500 font-normal">{plan.period}</span></div>
+            <div className="text-3xl font-black text-white my-2">{plan.price}<span className="text-sm text-gray-500 font-normal">{plan.period}</span></div>
             <p className="text-xs text-gray-500 mb-5">{plan.desc}</p>
             <ul className="text-left space-y-2 mb-6">
               {plan.features.map((f, i) => (

@@ -30,33 +30,17 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center px-6">
       <div className="w-full max-w-sm bg-[var(--navy-light)] border border-[var(--gold)]/15 rounded-2xl p-8">
-        <h2 className="text-2xl font-serif font-bold text-white text-center mb-6">
+        <h2 className="text-2xl font-bold text-white text-center mb-6">
           {isRegister ? '创建账户' : '登录'}
         </h2>
         {error && <p className="text-red-400 text-sm text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="邮箱"
-            required
-            className="w-full bg-[var(--navy)] border border-white/10 rounded-lg px-4 py-3 text-white outline-none focus:border-[var(--gold)]"
-          />
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="密码"
-            required
-            minLength={6}
-            className="w-full bg-[var(--navy)] border border-white/10 rounded-lg px-4 py-3 text-white outline-none focus:border-[var(--gold)]"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-[var(--gold)] to-[var(--gold-dim)] text-[var(--navy)] rounded-lg py-3 font-bold disabled:opacity-50"
-          >
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="邮箱" required
+            className="w-full bg-[var(--navy)] border border-white/10 rounded-lg px-4 py-3 text-white outline-none focus:border-[var(--gold)]" />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="密码" required minLength={6}
+            className="w-full bg-[var(--navy)] border border-white/10 rounded-lg px-4 py-3 text-white outline-none focus:border-[var(--gold)]" />
+          <button type="submit" disabled={loading}
+            className="w-full bg-gradient-to-r from-[var(--gold)] to-[var(--gold-dim)] text-[var(--navy)] rounded-lg py-3 font-bold disabled:opacity-50">
             {loading ? '处理中...' : isRegister ? '注册' : '登录'}
           </button>
         </form>
