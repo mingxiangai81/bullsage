@@ -4,10 +4,10 @@ from app.config import settings
 stripe.api_key = settings.stripe_secret_key
 
 PRODUCTS = {
-    "single_report": {"name": "MasterLens Single Report", "amount": 900, "mode": "payment"},
-    "pro_monthly": {"name": "MasterLens Pro Monthly", "amount": 1900, "mode": "subscription"},
-    "pro_annual": {"name": "MasterLens Pro Annual", "amount": 17900, "mode": "subscription"},
-    "lifetime": {"name": "MasterLens Founding Member", "amount": 29900, "mode": "payment"},
+    "single_report": {"name": "BullSage Single Report", "amount": 900, "mode": "payment"},
+    "pro_monthly": {"name": "BullSage Pro Monthly", "amount": 1900, "mode": "subscription"},
+    "pro_annual": {"name": "BullSage Pro Annual", "amount": 17900, "mode": "subscription"},
+    "lifetime": {"name": "BullSage Founding Member", "amount": 29900, "mode": "payment"},
 }
 
 

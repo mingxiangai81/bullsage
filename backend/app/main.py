@@ -7,7 +7,7 @@ from app.routes.watchlist import router as watchlist_router
 from app.routes.reports import router as reports_router
 from app.routes.payments import router as payments_router
 
-app = FastAPI(title="MasterLens API", version="0.1.0")
+app = FastAPI(title="BullSage API", version="0.1.0")
 
 app.add_middleware(
     CORSMiddleware,
