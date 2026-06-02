@@ -674,7 +674,7 @@ body.en [data-lang-en].inline-item { display:inline; }
           <button class="lang-btn" data-lang="en">EN</button>
         </div>
       </li>
-      <li><a href="#pricing" class="nav-cta"><span data-lang-zh>免费试用</span><span data-lang-en>Try Free</span></a></li>
+      <li><a href="/login" class="nav-cta"><span data-lang-zh>免费试用</span><span data-lang-en>Try Free</span></a></li>
     </ul>
   </div>
 </nav>
@@ -1194,7 +1194,7 @@ body.en [data-lang-en].inline-item { display:inline; }
           <li><span class="icon yes">✓</span><span data-lang-zh>每月 2 次大师快速判断</span><span data-lang-en>2 master quick verdicts/mo</span></li>
           <li><span class="icon yes">✓</span><span data-lang-zh>教育内容全部开放</span><span data-lang-en>Full educational content</span></li>
         </ul>
-        <a href="#" class="price-btn price-btn-outline"><span data-lang-zh>免费开始</span><span data-lang-en>Start Free</span></a>
+        <a href="/login" class="price-btn price-btn-outline"><span data-lang-zh>免费开始</span><span data-lang-en>Start Free</span></a>
       </div>
       <!-- Single Report -->
       <div class="price-card fade-up delay-1">
@@ -1208,7 +1208,7 @@ body.en [data-lang-en].inline-item { display:inline; }
           <li><span class="icon yes">✓</span><span data-lang-zh>30 天访问权</span><span data-lang-en>30-day access</span></li>
           <li><span class="icon yes">✓</span><span data-lang-zh>PDF 导出</span><span data-lang-en>PDF export</span></li>
         </ul>
-        <a href="#" class="price-btn price-btn-outline"><span data-lang-zh>购买单份报告</span><span data-lang-en>Buy Single Report</span></a>
+        <a href="/login" class="price-btn price-btn-outline"><span data-lang-zh>购买单份报告</span><span data-lang-en>Buy Single Report</span></a>
       </div>
       <!-- Pro -->
       <div class="price-card featured fade-up delay-2">
@@ -1224,7 +1224,7 @@ body.en [data-lang-en].inline-item { display:inline; }
           <li><span class="icon yes">✓</span><span data-lang-zh>完整交易执行层</span><span data-lang-en>Full trade execution layer</span></li>
           <li><span class="icon yes">✓</span><span data-lang-zh>无限自选股</span><span data-lang-en>Unlimited watchlist</span></li>
         </ul>
-        <a href="#" class="price-btn price-btn-gold"><span data-lang-zh>升级到 Pro</span><span data-lang-en>Upgrade to Pro</span></a>
+        <a href="/login" class="price-btn price-btn-gold"><span data-lang-zh>升级到 Pro</span><span data-lang-en>Upgrade to Pro</span></a>
         <div class="price-save"><span data-lang-zh>比 Seeking Alpha 便宜 40%</span><span data-lang-en>40% cheaper than Seeking Alpha</span></div>
       </div>
       <!-- Lifetime -->
@@ -1239,7 +1239,7 @@ body.en [data-lang-en].inline-item { display:inline; }
           <li><span class="icon yes">✓</span><span data-lang-zh>创始会员专属标识</span><span data-lang-en>Founding member badge</span></li>
           <li><span class="icon yes">✓</span><span data-lang-zh>限量 500 名额</span><span data-lang-en>Limited to 500 members</span></li>
         </ul>
-        <a href="#" class="price-btn price-btn-outline"><span data-lang-zh>锁定终身价格</span><span data-lang-en>Lock Lifetime Price</span></a>
+        <a href="/login" class="price-btn price-btn-outline"><span data-lang-zh>锁定终身价格</span><span data-lang-en>Lock Lifetime Price</span></a>
         <div class="price-save"><span data-lang-zh>相当于不到 1.5 年 Pro 费用</span><span data-lang-en>Less than 1.5 years of Pro</span></div>
       </div>
     </div>
@@ -1368,7 +1368,7 @@ body.en [data-lang-en].inline-item { display:inline; }
     </h2>
     <p class="fade-up"><span data-lang-zh>输入任意股票代码，获得巴菲特、格雷厄姆、林奇等10位大师的独立裁决。每月3次免费，无需信用卡。</span><span data-lang-en>Enter any ticker for independent verdicts from Buffett, Graham, Lynch and 7 more masters. 3 free reports/month, no credit card required.</span></p>
     <div class="cta-buttons fade-up">
-      <a href="#" class="btn-lg btn-gold"><span data-lang-zh>免费开始分析</span><span data-lang-en>Start Free Analysis</span></a>
+      <a href="/login" class="btn-lg btn-gold"><span data-lang-zh>免费开始分析</span><span data-lang-en>Start Free Analysis</span></a>
       <a href="#verdict" class="btn-lg btn-outline"><span data-lang-zh>查看演示</span><span data-lang-en>See Demo</span></a>
     </div>
     <p class="cta-disclaimer"><span data-lang-zh>本平台提供的所有分析内容均为教育性质，不构成投资建议。投资有风险，入市需谨慎。</span><span data-lang-en>All analysis provided is educational in nature and does not constitute investment advice. Investing involves risk.</span></p>
@@ -1448,20 +1448,13 @@ const tickers = ['AAPL','TSLA','MSFT','GOOGL','AMZN','NVDA','0700.HK','BABA','99
 tickerGo.addEventListener('click', () => {
   const val = tickerInput.value.trim().toUpperCase();
   if (val) {
-    tickerGo.innerHTML = '<span data-lang-zh>分析中...</span><span data-lang-en>Analyzing...</span>';
-    if(document.body.classList.contains('en')){
-      tickerGo.textContent='Analyzing...';
-    } else {
-      tickerGo.textContent='分析中...';
-    }
+    const isEn = document.body.classList.contains('en');
+    tickerGo.textContent = isEn ? 'Analyzing...' : '分析中...';
+    tickerGo.disabled = true;
+    // Navigate to the React app's analyze page
     setTimeout(() => {
-      document.getElementById('verdict').scrollIntoView({ behavior: 'smooth' });
-      if(document.body.classList.contains('en')){
-        tickerGo.textContent='Get Verdict';
-      } else {
-        tickerGo.textContent='获取裁决';
-      }
-    }, 1200);
+      window.location.href = '/analyze/' + val;
+    }, 600);
   }
 });
 tickerInput.addEventListener('keydown', (e) => {
