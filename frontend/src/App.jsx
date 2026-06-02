@@ -4,6 +4,7 @@ import Analyze from './pages/Analyze';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Pricing from './pages/Pricing';
+import Legal from './pages/Legal';
 import Navbar from './components/Navbar';
 
 export default function App() {
@@ -16,6 +17,8 @@ export default function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/legal" element={<Legal />} />
+        <Route path="/legal/:section" element={<Legal />} />
       </Routes>
     </BrowserRouter>
   );
