@@ -50,17 +50,40 @@ export default function Login() {
         ? { email, password, full_name: fullName, country, date_of_birth: dob }
         : { email, password };
 
-      const res = await api.post(endpoint, payload);
+      const res = await api.post(endpoint, payload, { validateStatus: (s) => s < 500 });
+
+      // 202 = email confirmation required
+      if (res.status === 202 || res.data?.email_confirmation_required || res.data?.detail === 'CHECK_EMAIL') {
+        setError(
+          lang === 'zh'
+            ? '✅ 注册成功！请检查邮箱 ' + email + ' 并点击确认链接，然后再登录。'
+            : '✅ Registered! Please check ' + email + ' and click the confirmation link, then log in.'
+        );
+        setLoading(false);
+        return;
+      }
+
+      if (res.status >= 400) {
+        const detail = res.data?.detail || '';
+        if (detail.includes('already registered') || detail.includes('already exists') || detail.includes('Email already registered')) {
+          setError(lang === 'zh' ? '该邮箱已注册，请直接登录。' : 'Email already registered. Please log in.');
+        } else if (detail.includes('Invalid login') || detail.includes('Invalid email or password')) {
+          setError(lang === 'zh' ? '邮箱或密码错误。' : 'Invalid email or password.');
+        } else if (detail.includes('Email not confirmed')) {
+          setError(lang === 'zh' ? '请先确认邮箱，检查你的收件箱。' : 'Please confirm your email first. Check your inbox.');
+        } else {
+          setError(detail || (lang === 'zh' ? '操作失败，请重试。' : 'Failed. Please try again.'));
+        }
+        setLoading(false);
+        return;
+      }
+
       localStorage.setItem('access_token', res.data.access_token);
       localStorage.setItem('user_email',   res.data.email);
       navigate('/dashboard');
     } catch (err) {
-      const detail = err.response?.data?.detail || '';
-      if (detail.includes('already registered') || detail.includes('already exists')) {
-        setError(lang === 'zh' ? '该邮箱已注册，请直接登录。' : 'Email already registered. Please log in.');
-      } else {
-        setError(detail || (lang === 'zh' ? '操作失败，请重试。' : 'Failed. Please try again.'));
-      }
+      const detail = err.response?.data?.detail || err.message || '';
+      setError(detail || (lang === 'zh' ? '网络错误，请重试。' : 'Network error. Please try again.'));
     } finally {
       setLoading(false);
     }
