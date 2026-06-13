@@ -303,9 +303,9 @@ export default async function handler(request) {
     // Fetch financial data from Yahoo Finance
     const fd = await fetchFinancialData(ticker);
 
-    // Generate full report via Vercel AI Gateway
+    // Generate full report via Vercel AI Gateway (Gemini)
     const { text } = await generateText({
-      model: 'openai/gpt-4o',
+      model: 'google/gemini-2.5-pro',
       prompt: buildPrompt(fd, lang),
       maxTokens: 8000,
     });
