@@ -1,19 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = 'https://hlraxyshjnmtqioonejh.supabase.co';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscmF4eXNoam5tdHFpb29uZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTIxMjUsImV4cCI6MjA5NTg2ODEyNX0.wJNtmypQ8ABb68oOaUbVJsNibHy7sC-KrDaN5p5KaKg';
+import { getUserFromRequest } from './_lib/supabase.js';
 
 export default async function handler(req) {
-  const token = req.headers.get('authorization')?.split(' ')[1];
-  if (!token) return Response.json({ authenticated: false });
+  const auth = await getUserFromRequest(req);
+  if (!auth) return Response.json({ authenticated: false });
+  const { user, supabase } = auth;
 
   try {
-    const supabase = createClient(SUPABASE_URL, ANON_KEY, {
-      global: { headers: { Authorization: `Bearer ${token}` } },
-    });
-    const { data: { user } } = await supabase.auth.getUser(token);
-    if (!user) return Response.json({ authenticated: false });
-
     const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
 
     const isTrial = profile?.is_trial ?? false;
@@ -35,7 +27,7 @@ export default async function handler(req) {
       trial_days_left: daysLeft,
       trial_expires_at: profile?.trial_expires_at || null,
     });
-  } catch (err) {
+  } catch {
     return Response.json({ authenticated: false });
   }
 }

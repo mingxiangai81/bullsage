@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useLang from '../hooks/useLang';
 
 export default function TickerInput({ size = 'lg' }) {
   const [ticker, setTicker] = useState('');
+  const [lang] = useLang();
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -21,7 +23,7 @@ export default function TickerInput({ size = 'lg' }) {
         className={`flex-1 bg-[var(--navy)] border border-[var(--gold)]/25 rounded-xl text-white font-mono tracking-wider uppercase outline-none focus:border-[var(--gold)] transition ${size === 'lg' ? 'px-5 py-4 text-lg' : 'px-4 py-3 text-base'}`}
       />
       <button type="submit" className={`bg-gradient-to-r from-[var(--gold)] to-[var(--gold-dim)] text-[var(--navy)] rounded-xl font-bold whitespace-nowrap hover:shadow-lg hover:shadow-[var(--gold)]/20 transition ${size === 'lg' ? 'px-8 py-4 text-lg' : 'px-6 py-3'}`}>
-        获取裁决
+        {lang === 'zh' ? '获取裁决' : 'Get Verdicts'}
       </button>
     </form>
   );

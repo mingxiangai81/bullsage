@@ -31,15 +31,12 @@ export default function Feedback() {
     setLoading(true);
     setError('');
     try {
-      // Store feedback via backend (or directly if no auth required)
       await api.post('/api/feedback', {
         rating,
         category,
         message: message.trim(),
         email: email.trim() || null,
         language: lang,
-      }).catch(() => {
-        // If endpoint not yet wired, silently succeed for now
       });
       setSubmitted(true);
     } catch {

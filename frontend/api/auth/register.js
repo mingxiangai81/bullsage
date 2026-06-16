@@ -1,7 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = 'https://hlraxyshjnmtqioonejh.supabase.co';
-const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhscmF4eXNoam5tdHFpb29uZWpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTIxMjUsImV4cCI6MjA5NTg2ODEyNX0.wJNtmypQ8ABb68oOaUbVJsNibHy7sC-KrDaN5p5KaKg';
+import { SUPABASE_URL, ANON_KEY } from '../_lib/supabase.js';
 
 // SUPABASE_SERVICE_KEY must be set in Vercel env vars for auto-confirm
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';

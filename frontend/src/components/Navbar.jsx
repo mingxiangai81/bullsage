@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import useLang from '../hooks/useLang';
 
 export default function Navbar() {
-  const [lang, setLang] = useState('zh');
+  const [lang, setLang] = useLang();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-[var(--navy)]/90 backdrop-blur-xl border-b border-[var(--gold)]/15">
