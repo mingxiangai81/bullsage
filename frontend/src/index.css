@@ -3,13 +3,33 @@
 :root {
   --navy: #0a1628;
   --navy-light: #132038;
+  --navy-mid: #1a2d4a;
   --gold: #c9a84c;
   --gold-light: #e8d48b;
   --gold-dim: #a08432;
+  --white: #f4f0eb;
+  --text: #c8c2b8;
+  --text-light: #9e9789;
+  --accent-green: #34d399;
+  --accent-red: #f87171;
+  --accent-blue: #60a5fa;
+  --card-bg: rgba(19, 32, 56, 0.6);
+  --glass: rgba(255,255,255,0.04);
+  --border: rgba(201, 168, 76, 0.15);
+  --serif-en: 'Playfair Display', Georgia, serif;
+  --serif-cn: 'Noto Serif SC', '宋体', serif;
+  --sans-en: 'Inter', -apple-system, sans-serif;
+  --sans-cn: 'Noto Sans SC', '微软雅黑', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--navy);
-  color: #c8c2b8;
-  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  color: var(--text);
+  font-family: var(--sans-cn), var(--sans-en);
+  overflow-x: hidden;
 }
+
+::selection { background: var(--gold); color: var(--navy); }
