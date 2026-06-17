@@ -88,25 +88,25 @@ export default function Login() {
     }
   };
 
-  // ── Email confirmation waiting screen ─────────────────────────────────────
+  // ── Success / welcome screen ───────────────────────────────────────────
   if (emailSent) {
     return (
       <div className="min-h-screen flex items-center justify-center px-6">
         <div className="max-w-md w-full bg-[var(--navy-light)] border border-[var(--gold)]/15 rounded-2xl p-10 text-center shadow-xl">
-          <div className="text-6xl mb-5">📬</div>
+          <div className="text-6xl mb-5">🎉</div>
           <h2 className="text-2xl font-bold text-white mb-3">
-            {lang === 'zh' ? '注册成功！请确认邮箱' : 'Almost there!'}
+            {lang === 'zh' ? '注册成功！欢迎加入 BullSage 牛智' : 'Success! Welcome to BullSage'}
           </h2>
           <p className="text-gray-400 mb-2">
             {lang === 'zh'
-              ? `确认邮件已发送到：`
-              : `We sent a confirmation link to:`}
+              ? `最后一步 — 我们已将确认邮件发送到：`
+              : `One last step — we sent a confirmation email to:`}
           </p>
           <p className="text-[var(--gold)] font-semibold mb-6 break-all">{emailSent}</p>
           <p className="text-sm text-gray-500 mb-8">
             {lang === 'zh'
-              ? '请点击邮件中的链接完成注册，然后回来登录。邮件可能需要 1-2 分钟，也请检查垃圾邮件。'
-              : 'Click the link in the email to verify your account, then come back to log in. Check spam if you don\'t see it.'}
+              ? '请点击邮件中的链接完成验证，然后回来登录开始你的 7 天免费体验。邮件可能需要 1-2 分钟送达，也请检查垃圾邮件。'
+              : 'Click the link in the email to verify your account, then come back to log in and start your 7-day free trial. It may take 1-2 minutes to arrive — check spam if you don\'t see it.'}
           </p>
           <button
             onClick={() => { setEmailSent(''); setIsRegister(false); setError(''); }}
