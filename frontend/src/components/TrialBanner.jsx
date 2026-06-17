@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import useLang from '../hooks/useLang';
 
 export default function TrialBanner() {
   const [status, setStatus] = useState(null);
-  const lang = localStorage.getItem('lang') || 'zh';
+  const [lang] = useLang();
   const token = localStorage.getItem('access_token');
 
   useEffect(() => {

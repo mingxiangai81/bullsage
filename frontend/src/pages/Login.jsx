@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
+import useLang from '../hooks/useLang';
 
 const COUNTRIES = [
   'Singapore', 'Malaysia', 'Hong Kong', 'Taiwan', 'Australia',
@@ -12,7 +13,7 @@ const COUNTRIES = [
 const INPUT = "w-full bg-[var(--navy)] border border-white/10 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-[var(--gold)] transition placeholder:text-gray-600";
 
 export default function Login() {
-  const lang = localStorage.getItem('lang') || 'zh';
+  const [lang] = useLang();
   const [isRegister, setIsRegister] = useState(false);
   const [error, setError]           = useState('');
   const [loading, setLoading]       = useState(false);
@@ -31,7 +32,11 @@ export default function Login() {
     setError('');
 
     if (isRegister) {
-      const age = new Date().getFullYear() - new Date(dob).getFullYear();
+      const birth = new Date(dob);
+      const today = new Date();
+      let age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
       if (age < 18) {
         setError(lang === 'zh' ? '必须年满 18 岁才能注册。' : 'You must be at least 18 years old to register.');
         setLoading(false);

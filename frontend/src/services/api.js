@@ -15,7 +15,7 @@ api.interceptors.request.use((config) => {
 export const getQuote = (ticker) => api.get(`/api/quote/${ticker}`);
 export const analyzeStock = (ticker, lang = 'zh') => api.get(`/api/analyze/${ticker}?lang=${lang}`);
 export const getWatchlist = () => api.get('/api/watchlist');
-export const addToWatchlist = (ticker) => api.post(`/api/watchlist/${ticker}`);
+export const addToWatchlist = (ticker) => api.post('/api/watchlist', { ticker });
 export const removeFromWatchlist = (ticker) => api.delete(`/api/watchlist/${ticker}`);
 export const getReports = () => api.get('/api/reports');
 export const createCheckout = (productType) => api.post('/api/checkout', { product_type: productType });
