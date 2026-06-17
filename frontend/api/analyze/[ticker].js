@@ -1,5 +1,9 @@
 import { generateText } from 'ai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createUserSupabaseClient } from '../_lib/supabase.js';
+
+// Direct Google AI Studio key (bypasses Vercel AI Gateway entirely)
+const google = createGoogleGenerativeAI({ apiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY });
 
 export const config = { runtime: 'edge' };
 
@@ -303,9 +307,9 @@ export default async function handler(request) {
     // Fetch financial data from Yahoo Finance
     const fd = await fetchFinancialData(ticker);
 
-    // Generate full report via Vercel AI Gateway (Gemini)
+    // Generate full report via Google AI Studio (direct API key, no gateway)
     const { text } = await generateText({
-      model: 'google/gemini-2.5-pro',
+      model: google('gemini-2.5-pro'),
       prompt: buildPrompt(fd, lang),
       maxTokens: 8000,
     });
