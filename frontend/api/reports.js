@@ -1,5 +1,7 @@
 import { getUserFromRequest } from './_lib/supabase.js';
 
+export const config = { runtime: 'edge' };
+
 export default async function handler(req) {
   if (req.method !== 'GET') return new Response('Method Not Allowed', { status: 405 });
 

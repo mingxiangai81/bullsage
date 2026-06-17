@@ -1,6 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { SUPABASE_URL, ANON_KEY } from '../_lib/supabase.js';
 
+export const config = { runtime: 'edge' };
+
 // SUPABASE_SERVICE_KEY must be set in Vercel env vars for auto-confirm
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
 
