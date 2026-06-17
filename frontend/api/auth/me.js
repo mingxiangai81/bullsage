@@ -1,5 +1,7 @@
 import { getUserFromRequest } from '../_lib/supabase.js';
 
+export const config = { runtime: 'edge' };
+
 export default async function handler(req) {
   const auth = await getUserFromRequest(req);
   if (!auth) return Response.json({ detail: 'Missing or invalid token' }, { status: 401 });
