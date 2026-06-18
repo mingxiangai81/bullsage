@@ -3,9 +3,6 @@ import { SUPABASE_URL, ANON_KEY } from '../_lib/supabase.js';
 
 export const config = { runtime: 'edge' };
 
-// SUPABASE_SERVICE_KEY must be set in Vercel env vars for auto-confirm
-const SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY || '';
-
 export default async function handler(req) {
   if (req.method !== 'POST') {
     return new Response('Method Not Allowed', { status: 405 });
@@ -18,41 +15,9 @@ export default async function handler(req) {
       return Response.json({ detail: 'All fields are required' }, { status: 400 });
     }
 
-    // ── Path A: Admin key available → create user with auto-confirm ──────────
-    if (SERVICE_KEY) {
-      const admin = createClient(SUPABASE_URL, SERVICE_KEY);
-      const { data: created, error: createErr } = await admin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: {
-          full_name,
-          display_name: full_name.split(' ')[0],
-          country,
-          date_of_birth,
-        },
-      });
-
-      if (createErr) {
-        const detail = (createErr.message || '').includes('already')
-          ? 'Email already registered. Please log in.'
-          : createErr.message;
-        return Response.json({ detail }, { status: 400 });
-      }
-
-      // Sign in to get session
-      const client = createClient(SUPABASE_URL, ANON_KEY);
-      const { data: session, error: signErr } = await client.auth.signInWithPassword({ email, password });
-      if (signErr) return Response.json({ detail: signErr.message }, { status: 401 });
-
-      return Response.json({
-        access_token: session.session.access_token,
-        user_id: session.user.id,
-        email: session.user.email,
-      });
-    }
-
-    // ── Path B: No admin key → standard signUp (email confirm required) ──────
+    // Standard signUp — Supabase sends a confirmation email; account is
+    // unusable until the user clicks the link, so the frontend shows a
+    // "check your email" screen rather than logging them straight in.
     const client = createClient(SUPABASE_URL, ANON_KEY);
     const { data, error } = await client.auth.signUp({
       email,
@@ -68,9 +33,17 @@ export default async function handler(req) {
     });
 
     if (error) {
-      const detail = (error.message || '').toLowerCase().includes('already')
-        ? 'Email already registered. Please log in.'
-        : error.message;
+      const lower = (error.message || '').toLowerCase();
+      let detail;
+      if (lower.includes('already')) {
+        detail = 'Email already registered. Please log in.';
+      } else if (lower.includes('database error saving new user')) {
+        // See frontend/supabase/migrations/0002_fix_profiles_plan_check.sql
+        // for the underlying profiles-trigger issue this used to indicate.
+        detail = 'We hit a temporary issue creating your account. Please try again in a moment.';
+      } else {
+        detail = error.message;
+      }
       return Response.json({ detail }, { status: 400 });
     }
 
