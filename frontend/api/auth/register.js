@@ -33,9 +33,17 @@ export default async function handler(req) {
     });
 
     if (error) {
-      const detail = (error.message || '').toLowerCase().includes('already')
-        ? 'Email already registered. Please log in.'
-        : error.message;
+      const lower = (error.message || '').toLowerCase();
+      let detail;
+      if (lower.includes('already')) {
+        detail = 'Email already registered. Please log in.';
+      } else if (lower.includes('database error saving new user')) {
+        // See frontend/supabase/migrations/0002_fix_profiles_plan_check.sql
+        // for the underlying profiles-trigger issue this used to indicate.
+        detail = 'We hit a temporary issue creating your account. Please try again in a moment.';
+      } else {
+        detail = error.message;
+      }
       return Response.json({ detail }, { status: 400 });
     }
 
